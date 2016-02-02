@@ -1,19 +1,11 @@
 buildscript {
-	ext {
-		springBootVersion = '1.3.2.RELEASE'
-	}
 	repositories {
 		mavenCentral()
-	}
-	dependencies {
-		classpath("org.springframework.boot:spring-boot-gradle-plugin:${springBootVersion}") 
 	}
 }
 
 apply plugin: 'java'
 apply plugin: 'eclipse'
-apply plugin: 'idea'
-apply plugin: 'spring-boot' 
 
 jar {
 	baseName = 'imgmur'
@@ -28,12 +20,12 @@ repositories {
 
 
 dependencies {
-	compile 'org.springframework.boot:spring-boot-starter',
-			'org.springframework:spring-webmvc:4.2.4.RELEASE',
-			'org.springframework.boot:spring-boot-starter-web:1.3.2.RELEASE',
+	compile 'com.bladejava:blade-core:1.5.1',
+			'com.bladejava:blade-startup:1.0.1',
 			'commons-lang:commons-lang:2.6',
 			'commons-io:commons-io:2.4'
-	testCompile('org.springframework.boot:spring-boot-starter-test') 
+	testCompile 'junit:junit:4.+'
+	
 }
 
 
