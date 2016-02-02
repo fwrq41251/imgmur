@@ -1,38 +1,52 @@
 <html>
-<script src="./dropzone.js"></script>
-<link rel="stylesheet" type="text/css" href="./dropzone.css">
-<link rel="stylesheet" type="text/css" href="./style.css">
+<script src="js/jquery-2.2.0.min.js"></script>
+<script src="js/dropzone.js"></script>
+<link rel="stylesheet" type="text/css" href="css/dropzone.css">
+<link rel="stylesheet" type="text/css" href="css/style.css">
 
 <script>
-Dropzone.options.my = {
+var files = new Set();
+Dropzone.options.myDropzone = {
 	paramName: "file", // The name that will be used to transfer the file
 	maxFilesize: 10, // MB
-	uploadMultiple: true,
-	addRemoveLinks: true,
-	removedfile: function(file) {
-		var _ref;
-		return (_ref = file.previewElement) != null ? _ref.parentNode.removeChild(file.previewElement) : void 0;
+	addRemoveLinks:true,
+	init: function() {
+		this.on("success", function(file, response) {
+			var code = response.data;
+			files.add(code);
+			$("#code").show();
+			$("#url").append(document.createTextNode(code.url));
+			$("#htmlCode").append(document.createTextNode(code.htmlCode));
+			$("#bbCode").append(document.createTextNode(code.BBCode));
+			$("#markdown").append(document.createTextNode(code.markdown));
+		});
 	}
 };
 </script>
 <style>
-#my-dropzone {
+body {
 	margin: auto;
-	height: 300px;
 	width: 700px;
 }
-#title {
-	margin: auto;
-	width: 700px;
+
+#my-dropzone {
+	height: 300px;
 }
 </style>
 <body>
-	<div id="title">
-		<h2>Image Upload</h2>
-		10 MB max per file.
+	<h2>Image Upload</h2>
+	10 MB max per file.
+	<hr style="margin: auto; width: 700px;" />
+	<form action="/upload" class="dropzone" id="myDropzone"></form>
+	<div style="display:none;" id="code">
+		<p>URL:</p>
+		<code id="url"></code>
+		<p>HTML Code:</p>
+		<code id="htmlCode"></code>
+		<p>BBCode:</p>
+		<code id="bbCode"></code>
+		<p>Markdown:</p>
+		<code id="markdown"></code>
 	</div>
-	<hr style="margin:auto; width:700px; "/>
-	<form action="/upload" class="dropzone" id="my-dropzone">
-	</form>
 </body>
 </html>
