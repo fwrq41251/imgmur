@@ -3,7 +3,8 @@ package com.winry.controller;
 import java.io.File;
 import java.io.IOException;
 import java.text.MessageFormat;
-import java.util.UUID;
+import java.time.LocalDateTime;
+import java.util.Base64;
 
 import javax.servlet.ServletContext;
 
@@ -19,6 +20,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.multipart.MultipartFile;
 
 import com.winry.dto.ResultDto;
+import com.winry.util.DateTimeUtil;
 import com.winry.util.ResultDtoFactory;
 
 @Controller
@@ -29,7 +31,7 @@ public class UploadController {
 
 	@RequestMapping(value = "/upload", method = RequestMethod.POST)
 	public @ResponseBody ResultDto handleFileUpload(@RequestParam("file") MultipartFile file) throws IOException {
-		String name = UUID.randomUUID().toString();
+		String name = Base64.getEncoder().encodeToString(DateTimeUtil.getNowTime().getBytes("utf-8"));
 		String ext = StringUtils.substringAfterLast(file.getOriginalFilename(), ".").toLowerCase();
 		String fullName = name + "." + ext;
 		File tempFile = new File(generateFileName(fullName));
