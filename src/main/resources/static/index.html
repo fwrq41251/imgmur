@@ -1,18 +1,18 @@
 <html>
 <head>
-	<script src="js/jquery-2.2.0.min.js"></script>
-	<script src="js/dropzone.js"></script>
-	<link rel="stylesheet" type="text/css" href="css/dropzone.css">
-	<link rel="stylesheet" type="text/css" href="css/style.css">
+<script src="js/jquery-2.2.0.min.js"></script>
+<script src="js/dropzone.js"></script>
+<link rel="stylesheet" type="text/css" href="css/dropzone.css">
+<link rel="stylesheet" type="text/css" href="css/style.css">
 
-	<script>
+<script>
 	$(document).ready(function() {
 		var files = [];
 		function updateCodeArea(code) {
-			$("#url").html(document.createTextNode(code.url));
-			$("#htmlCode").html(document.createTextNode(code.htmlCode));
-			$("#bbCode").html(document.createTextNode(code.bbcode));
-			$("#markdown").html(document.createTextNode(code.markdown));
+			$("#url").val(code.url);
+			$("#htmlCode").val(code.htmlCode);
+			$("#bbCode").val(code.bbcode);
+			$("#markdown").val(code.markdown);
 		}
 		Dropzone.options.myDropzone = {
 			paramName: "file", // The name that will be used to transfer the file
@@ -37,47 +37,110 @@
 		});
 	});
 	</script>
-	<style>
-	body {
-		font-family: Helvetica Neue,Helvetica,Segoe UI,Arial,freesans,sans-serif; 
-		margin: auto;
-		width: 700px;
-	}
+<style>
+body {
+	font-family: Helvetica Neue, Helvetica, Segoe UI, Arial, freesans,
+		sans-serif;
+	margin: auto;
+	width: 700px;
+}
 
-	.dropzone img {
-		border-radius: 10px;
-		vertical-align: middle;
-		max-width: 95%;
-		max-height: 95%;
-	}
+.dropzone img {
+	border-radius: 10px;
+	vertical-align: middle;
+	max-width: 95%;
+	max-height: 95%;
+}
 
-	code {
-		font-family: Consolas, "Liberation Mono", Menlo, Courier, monospace;
-		font-size: 12px;
-		padding: 0.2em;
-		padding-top: 0.2em;
-		padding-bottom: 0.2em;
-		margin: 0;
-		font-size: 85%;
-		background-color: rgba(0,0,0,0.04);
-		border-radius: 3px;
-	}
-	</style>
+input[type="text"] {
+	min-height: 34px;
+	width:600px;
+	padding: 7px 8px;
+	font-size: 13px;
+	color: #333;
+	vertical-align: middle;
+	background-color: #fff;
+	background-repeat: no-repeat;
+	background-position: right 8px center;
+	border: 1px solid #ccc;
+	border-radius: 3px;
+	outline: none;
+	box-shadow: inset 0 1px 2px rgba(0, 0, 0, 0.075)
+}
+
+.btn {
+	position: relative;
+	display: inline-block;
+	padding: 6px 12px;
+	font-size: 13px;
+	font-weight: bold;
+	line-height: 20px;
+	color: #333;
+	white-space: nowrap;
+	vertical-align: middle;
+	cursor: pointer;
+	background-color: #eee;
+	background-image: linear-gradient(#fcfcfc, #eee);
+	border: 1px solid #d5d5d5;
+	border-radius: 3px;
+	-webkit-user-select: none;
+	-moz-user-select: none;
+	-ms-user-select: none;
+	user-select: none;
+	-webkit-appearance: none
+}
+
+</style>
 </head>
 <body>
 	<h2>Image Upload</h2>
 	10 MB max per file.
 	<hr style="margin: auto; width: 700px;" />
 	<form action="/upload" class="dropzone" id="myDropzone"></form>
-	<div style="display: none;" id="code">
+	<div id="code">
 		<p>URL:</p>
-		<code id="url"></code>
+		<div class="input-group">
+			<input id="url" type="text"> <span class="input-group-button">
+				<button class="btn" type="button" data-clipboard-demo
+					data-clipboard-target="#url">
+					<img class="clippy" src="img/clippy.svg" width="13"
+						alt="Copy to clipboard">
+				</button>
+			</span>
+		</div>
 		<p>HTML Code:</p>
-		<code id="htmlCode"></code>
+		<div class="input-group">
+			<input id="htmlCode" type="text"> <span
+				class="input-group-button">
+				<button class="btn" type="button" data-clipboard-demo
+					data-clipboard-target="#htmlCode">
+					<img class="clippy" src="img/clippy.svg" width="13"
+						alt="Copy to clipboard">
+				</button>
+			</span>
+		</div>
 		<p>BBCode:</p>
-		<code id="bbCode"></code>
+		<div class="input-group">
+			<input id="bbCode" type="text"> <span
+				class="input-group-button">
+				<button class="btn" type="button" data-clipboard-demo
+					data-clipboard-target="#bbCode">
+					<img class="clippy" src="img/clippy.svg" width="13"
+						alt="Copy to clipboard">
+				</button>
+			</span>
+		</div>
 		<p>Markdown:</p>
-		<code id="markdown"></code>
+		<div class="input-group">
+			<input id="markdown" type="text"> <span
+				class="input-group-button">
+				<button class="btn" type="button" data-clipboard-demo
+					data-clipboard-target="#markdown">
+					<img class="clippy" src="img/clippy.svg" width="13"
+						alt="Copy to clipboard">
+				</button>
+			</span>
+		</div>
 	</div>
 </body>
 </html>
