@@ -1,51 +1,69 @@
 <html>
-<script src="js/jquery-2.2.0.min.js"></script>
-<script src="js/dropzone.js"></script>
-<link rel="stylesheet" type="text/css" href="css/dropzone.css">
-<link rel="stylesheet" type="text/css" href="css/style.css">
+<head>
+	<script src="js/jquery-2.2.0.min.js"></script>
+	<script src="js/dropzone.js"></script>
+	<link rel="stylesheet" type="text/css" href="css/dropzone.css">
+	<link rel="stylesheet" type="text/css" href="css/style.css">
 
-<script>
-var files = [];
-Dropzone.options.myDropzone = {
-	paramName: "file", // The name that will be used to transfer the file
-	maxFilesize: 10, // MB
-	dictDefaultMessage:"Drop files here or click to upload.",
-	thumbnailWidth:"400",
-    thumbnailHeight:"400",
-	init: function() {
-		this.on("success", function(file, response) {
-			var code = response.data;
-			$("#code").show();
-			$("#url").append(document.createTextNode(code.url));
-			$("#htmlCode").append(document.createTextNode(code.htmlCode));
-			$("#bbCode").append(document.createTextNode(code.bbcode));
-			$("#markdown").append(document.createTextNode(code.markdown));
+	<script>
+	$(document).ready(function() {
+		var files = [];
+		function updateCodeArea(code) {
+			$("#url").html(document.createTextNode(code.url));
+			$("#htmlCode").html(document.createTextNode(code.htmlCode));
+			$("#bbCode").html(document.createTextNode(code.bbcode));
+			$("#markdown").html(document.createTextNode(code.markdown));
+		}
+		Dropzone.options.myDropzone = {
+			paramName: "file", // The name that will be used to transfer the file
+			maxFilesize: 10, // MB
+			dictDefaultMessage:"Drop files here or click to upload.",
+			thumbnailWidth:"400",
+			thumbnailHeight:"400",
+			init: function() {
+				this.on("success", function(file, response) {
+					var code = response.data;
+					files.push(code);
+					$("#code").show();
+					updateCodeArea(code);
+				});
+			}
+		};
+		$("body").on("click",".dz-preview",function(){
+			var me = $(this);
+			me.css("cursor", "pointer");
+			var code = files[(me.index())-1];
+			updateCodeArea(code);
 		});
+	});
+	</script>
+	<style>
+	body {
+		font-family: Helvetica Neue,Helvetica,Segoe UI,Arial,freesans,sans-serif; 
+		margin: auto;
+		width: 700px;
 	}
-};
-</script>
-<style>
-body {
-	margin: auto;
-	width: 700px;
-}
 
-.dropzone {
-	height: 200px;
-}
+	.dropzone img {
+		border-radius: 10px;
+		vertical-align: middle;
+		max-width: 95%;
+		max-height: 95%;
+	}
 
-.dz-message {
-	position: relative;
-	top: 10%;
-}
-
-.dropzone img {
-border-radius: 10px;
-vertical-align: middle;
-max-width: 95%;
-max-height: 95%;
-}
-</style>
+	code {
+		font-family: Consolas, "Liberation Mono", Menlo, Courier, monospace;
+		font-size: 12px;
+		padding: 0.2em;
+		padding-top: 0.2em;
+		padding-bottom: 0.2em;
+		margin: 0;
+		font-size: 85%;
+		background-color: rgba(0,0,0,0.04);
+		border-radius: 3px;
+	}
+	</style>
+</head>
 <body>
 	<h2>Image Upload</h2>
 	10 MB max per file.
