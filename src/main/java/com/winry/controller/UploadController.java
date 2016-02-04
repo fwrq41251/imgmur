@@ -3,15 +3,13 @@ package com.winry.controller;
 import java.io.File;
 import java.io.IOException;
 import java.text.MessageFormat;
-import java.time.LocalDateTime;
 import java.util.Base64;
 
-import javax.servlet.ServletContext;
+import javax.servlet.http.HttpServletRequest;
 
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.SystemUtils;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -22,26 +20,27 @@ import org.springframework.web.multipart.MultipartFile;
 import com.winry.dto.ResultDto;
 import com.winry.util.DateTimeUtil;
 import com.winry.util.ResultDtoFactory;
+import com.winry.util.WebUtil;
 
 @Controller
 public class UploadController {
 
-	@Autowired
-	private ServletContext servletContext;
-
 	@RequestMapping(value = "/upload", method = RequestMethod.POST)
-	public @ResponseBody ResultDto handleFileUpload(@RequestParam("file") MultipartFile file) throws IOException {
+	public @ResponseBody ResultDto handleFileUpload(@RequestParam("file") MultipartFile file,
+			HttpServletRequest request) throws IOException {
+		String baseUrl = WebUtil.getBaseUrl(request);
 		String name = Base64.getEncoder().encodeToString(DateTimeUtil.getNowTime().getBytes("utf-8"));
 		String ext = StringUtils.substringAfterLast(file.getOriginalFilename(), ".").toLowerCase();
 		String fullName = name + "." + ext;
 		File tempFile = new File(generateFileName(fullName));
 		FileUtils.copyInputStreamToFile(file.getInputStream(), tempFile);
-		UploadResult data = getUploadResult(fullName);
+		UploadResult data = getUploadResult(fullName, baseUrl);
 		return ResultDtoFactory.toSuccess(data);
 	}
 
-	private UploadResult getUploadResult(String name) {
-		UploadResult result = new UploadResult(name);
+
+	private UploadResult getUploadResult(String name, String baseUrl) {
+		UploadResult result = new UploadResult(name, baseUrl);
 		result.setUrl(result.fullName);
 		result.setHtmlCode(
 				MessageFormat.format("<img src=\"{0}\" alt=\"{1}\" title=\"{1}\" />", result.fullName, result.name));
@@ -55,7 +54,7 @@ public class UploadController {
 		return new StringBuilder().append(path).append(name).toString();
 	}
 
-	public class UploadResult {
+	public static class UploadResult {
 
 		final String fullName;
 		final String name;
@@ -68,10 +67,10 @@ public class UploadController {
 
 		private String markdown;
 
-		public UploadResult(String name) {
+		public UploadResult(String name, String baseUrl) {
 			super();
 			this.name = name;
-			this.fullName = servletContext.getContextPath() + name;
+			this.fullName = baseUrl + name;
 		}
 
 		public String getUrl() {
