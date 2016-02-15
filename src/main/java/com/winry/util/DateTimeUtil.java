@@ -13,4 +13,12 @@ public class DateTimeUtil {
 		DateTimeFormatter format = DateTimeFormatter.ofPattern("hhmmss");
 	    return zoned.format(format);
 	}
+
+	public static String getDatePath() {
+		ZoneId id = ZoneId.systemDefault();
+		ZonedDateTime zoned = ZonedDateTime.of(LocalDateTime.now(), id);
+		DateTimeFormatter format = DateTimeFormatter.ofPattern("yyyy/MM/dd/");
+		return zoned.format(format);
+	}
+
 }

@@ -2,6 +2,7 @@ package com.winry.controller;
 
 import java.io.File;
 import java.io.IOException;
+import java.io.UnsupportedEncodingException;
 import java.text.MessageFormat;
 import java.util.Base64;
 
@@ -29,34 +30,33 @@ public class UploadController {
 	public @ResponseBody ResultDto handleFileUpload(@RequestParam("file") MultipartFile file,
 			HttpServletRequest request) throws IOException {
 		String baseUrl = WebUtil.getBaseUrl(request);
-		String name = Base64.getEncoder().encodeToString(DateTimeUtil.getNowTime().getBytes("utf-8"));
-		String ext = StringUtils.substringAfterLast(file.getOriginalFilename(), ".").toLowerCase();
+		String name = generateFileName();
+		String ext = getExtensionName(file);
 		String fullName = name + "." + ext;
-		File tempFile = new File(generateFileName(fullName));
+		String path = DateTimeUtil.getDatePath();
+		File tempFile = newTempFile(path, fullName);
 		FileUtils.copyInputStreamToFile(file.getInputStream(), tempFile);
-		UploadResult data = getUploadResult(fullName, baseUrl);
+		UploadResult data = new UploadResult(fullName, baseUrl, path).init();
 		return ResultDtoFactory.toSuccess(data);
 	}
 
-
-	private UploadResult getUploadResult(String name, String baseUrl) {
-		UploadResult result = new UploadResult(name, baseUrl);
-		result.setUrl(result.fullName);
-		result.setHtmlCode(
-				MessageFormat.format("<img src=\"{0}\" alt=\"{1}\" title=\"{1}\" />", result.fullName, result.name));
-		result.setBBCode(MessageFormat.format("[img]{0}[/img]", result.fullName));
-		result.setMarkdown(MessageFormat.format("![{0}]({1})", result.name, result.fullName));
-		return result;
+	private File newTempFile(String path, String fullName) {
+		String fullPath = SystemUtils.IS_OS_WINDOWS ? FileUtils.getTempDirectoryPath() : "/var/www/html/" + path;
+		return new File(fullPath + fullName);
 	}
 
-	private String generateFileName(String name) {
-		String path = SystemUtils.IS_OS_WINDOWS ? FileUtils.getTempDirectoryPath() : "usr/imgmur";
-		return new StringBuilder().append(path).append(name).toString();
+	private String generateFileName() throws UnsupportedEncodingException {
+		return Base64.getEncoder().encodeToString(DateTimeUtil.getNowTime().getBytes("utf-8"));
+	}
+
+	private String getExtensionName(MultipartFile file) {
+		return StringUtils.substringAfterLast(file.getOriginalFilename(), ".").toLowerCase();
 	}
 
 	public static class UploadResult {
 
 		final String fullName;
+
 		final String name;
 
 		private String url;
@@ -67,10 +67,10 @@ public class UploadController {
 
 		private String markdown;
 
-		public UploadResult(String name, String baseUrl) {
+		public UploadResult(String name, String baseUrl, String path) {
 			super();
 			this.name = name;
-			this.fullName = baseUrl + name;
+			this.fullName = baseUrl + path + name;
 		}
 
 		public String getUrl() {
@@ -105,5 +105,13 @@ public class UploadController {
 			this.markdown = markdown;
 		}
 
+		UploadResult init() {
+			this.setUrl(fullName);
+			this.setHtmlCode(MessageFormat.format("<img src=\"{0}\" alt=\"{1}\" title=\"{1}\" />", fullName, name));
+			this.setBBCode(MessageFormat.format("[img]{0}[/img]", fullName));
+			this.setMarkdown(MessageFormat.format("![{0}]({1})", name, fullName));
+			return this;
+		}
 	}
+
 }
