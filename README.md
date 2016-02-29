@@ -11,4 +11,4 @@ $ java -jar build/libs/imgmur-0.0.1-SNAPSHOT
 ```
 
 # Demo
-http://45.78.43.130:8080/
+http://img.winry.me/
